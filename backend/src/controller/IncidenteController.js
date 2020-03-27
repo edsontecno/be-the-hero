@@ -25,10 +25,11 @@ class OngController {
         const [count] = await connection('incident').count();
 
         const list  = await  connection('incident')
-        .join('ongs', 'ong_id', '=', 'incident.ong_id')
+        .join('ongs', 'ongs.id', '=', 'incident.ong_id')
         .limit(5)
         .offset((page -1) * 5)
         .select(['incident.*', 'ongs.name', 'ongs.email', 'ongs.whatsapp', 'ongs.city', 'ongs.uf']);
+        //.select('*');
 
         response.header('X-Total-Count', count['count(*)']);
 
@@ -43,6 +44,10 @@ class OngController {
             .where('id', id)
             .select('ong_id')
             .first();
+
+        if(incident == undefined) {
+            return response.status(401).json({error: 'Incidente não localizado'});
+        }   
 
         console.log(ong_id);
 
